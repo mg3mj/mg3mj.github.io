@@ -18,8 +18,8 @@
 <body style="background-color: black; color: greenyellow; font-family: monospace;">
 
     <h1 id="welcome" style="transform:rotate3d(0,0,0); text-align: center;">Welcome!</h1>
-    <div>
-        <div id="map" style="height: 90%;"></div>
+    <div style="align-content: center;"">
+        <div id="map" style="height: 90%; align-content: center;"></div>
     </div>
     <script>
         var vehicle_url = "https://api.devhub.virginia.edu/v1/transit/vehicles";
@@ -84,7 +84,7 @@
 
         }
 
-        setInterval(getBusData(),300);
+        setInterval(function(){getBusData()},3000);
 
 
 
