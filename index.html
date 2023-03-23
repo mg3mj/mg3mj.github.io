@@ -22,7 +22,8 @@
         <div id="map" style="height: 90%; align-content: center;"></div>
     </div>
     <script>
-        var vehicle_url = "https://api.devhub.virginia.edu/v1/transit/vehicles";
+        // var vehicle_url = "https://api.devhub.virginia.edu/v1/transit/vehicles";
+        var vehicle_url = "https://feeds.transloc.com/3/vehicle_statuses?agencies=347&include_arrivals=true";
         var angle = 0;
 
 
@@ -85,6 +86,10 @@
         }
 
         setInterval(function(){getBusData()},3000);
+
+
+        // var usermarker = null;
+        // const id = navigator.geolocation.watchPosition(function(position){usermarker = L.marker(position).addTo(map)}, function(position){console.log('Error')});
 
 
 
