@@ -1,22 +1,94 @@
 <html>
-    <head>
-        <title>My Site</title>
-    </head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <body style="background-color: black; color: greenyellow; font-family: monospace;">
+<head>
+    <title>My Site</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    <style>
+        .leaflet-tile-pane {
+            filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+        }
+    </style>
+</head>
 
-        <h1 id="welcome" style="transform:rotate3d(0,0,0); text-align: center;">Welcome!</h1>
+<body style="background-color: black; color: greenyellow; font-family: monospace;">
 
-        <script>
-            var angle = 0;
-            setInterval(function() {
-                angle = angle + 1;
-                document.getElementById("welcome").style.transform = `rotate3d(0,.1,0,${angle}deg)`;
+    <h1 id="welcome" style="transform:rotate3d(0,0,0); text-align: center;">Welcome!</h1>
+    <div>
+        <div id="map" style="height: 90%;"></div>
+    </div>
+    <script>
+        var vehicle_url = "https://api.devhub.virginia.edu/v1/transit/vehicles";
+        var angle = 0;
 
-                if(angle === 360){
-                    angle = 0;
+
+
+        var map = L.map('map').setView([38.033554, -78.507980], 16);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 30,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        }).addTo(map);
+
+        setInterval(function () {
+            angle = angle + 1;
+            document.getElementById("welcome").style.transform = `rotate3d(0,.1,0,${angle}deg)`;
+
+            if (angle === 360) {
+                angle = 0;
+            }
+        }, 1);
+
+
+
+
+        var buses = [];
+        var markers = [];
+        var temp;
+
+        function renderBusData(data) {
+            temp = data;
+            buses = [];
+
+            for(var i = 0; i < markers.length; i++){
+                map.removeLayer(markers[i]);
+            }
+
+            for(var i = 0; i < data['vehicles'].length; i++){
+                buses.push({name:data['vehicles'][i]['call_name'],position:data['vehicles'][i]['position'],time:data['vehicles'][i]['timestamp']})
+            }
+
+            for(var i = 0; i < buses.length; i++){
+                let marker = L.marker(buses[i].position).addTo(map);
+                markers.push(marker); 
+                var date = new Date(buses[i]['time']);
+                marker.bindPopup(`${buses[i].name}:${date.toLocaleTimeString("en-US")}`);
+                
+            }
+        }
+
+        function getBusData() {
+            console.log('updating!');
+            $.ajax({
+                url: vehicle_url,
+                type: "GET",
+                success: function (result) { renderBusData(result) }
+                ,
+                error: function (error) {
+                    console.log("Error")
                 }
-                }  , 1);
-        </script>
-    </bodY>
+            })
+
+        }
+
+        setInterval(getBusData(),300);
+
+
+
+    </script>
+</bodY>
+
 </html>
